@@ -113,7 +113,13 @@ public class NetworkRequestMiningInfoTask
 
           // ensure default is not 0
           defaultTargetDeadline = defaultTargetDeadline > 0 ? defaultTargetDeadline : Long.MAX_VALUE;
-          long targetDeadline = poolMining ? result.getTargetDeadline() > 0 ? result.getTargetDeadline() : defaultTargetDeadline : defaultTargetDeadline;
+          long targetDeadline;
+          if(poolMining) {
+            long poolTargetDeadline = result.getTargetDeadline();
+            targetDeadline = defaultTargetDeadline < poolTargetDeadline ? defaultTargetDeadline : poolTargetDeadline;
+          } else {
+            targetDeadline = defaultTargetDeadline;
+          }
 
           publisher.publishEvent(new NetworkStateChangeEvent(newBlockNumber, baseTarget, newGenerationSignature, targetDeadline));
         }
